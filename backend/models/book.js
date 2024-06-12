@@ -6,8 +6,7 @@ const ratingSchema = new Schema({
   grade: { type: Number, required: true },
 });
 
-const thingSchema = new Schema({
-  id: { type: String, required: true },
+const bookSchema = new Schema({
   userId: { type: String, required: true },
   title: { type: String, required: true },
   author: { type: String, required: true },
@@ -18,6 +17,6 @@ const thingSchema = new Schema({
   averageRating: { type: Number, required: true },
 });
 
-const Thing = mongoose.model('Thing', thingSchema, 'books');
+const Book = mongoose.model('Book', bookSchema);
 
-module.exports = Thing;
+module.exports = Book;
