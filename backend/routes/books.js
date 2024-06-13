@@ -15,6 +15,8 @@ router.get('/:id', bookCtrl.getSingleBook);
 
 router.post('/', auth , multer , bookCtrl.postNewBook);
 
+router.post('/:id/rating', auth, bookCtrl.bookRating);
+
 router.delete('/:id', auth, multer, bookCtrl.deleteBook );
 
 router.put('/:id', auth , multer , bookCtrl.updateBook);
