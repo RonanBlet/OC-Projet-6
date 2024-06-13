@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const auth = require('../middleware/auth');
 const multer = require('../middleware/multer-config');
+const requiredFields = require('../middleware/requiredFields');
 
 
 const bookCtrl = require('../controllers/books');
@@ -13,7 +14,7 @@ router.get('/bestrating', bookCtrl.getBestRating);
 
 router.get('/:id', bookCtrl.getSingleBook);
 
-router.post('/', auth , multer , bookCtrl.postNewBook);
+router.post('/', auth ,multer, requiredFields , bookCtrl.postNewBook);
 
 router.post('/:id/rating', auth, bookCtrl.bookRating);
 
