@@ -54,25 +54,34 @@ exports.getBestRating = (req, res, next) => {
 
 exports.postNewBook = (req, res, next) => {
     const bookObject = JSON.parse(req.body.book);
-    delete bookObject._id;
-    delete bookObject.userId;
 
     const originalFilePath = req.file.path;
     const tempFilePath = path.join('images', 'temp_' + req.file.filename);
+    const finalFileName = req.file.filename.split('.').slice(0, -1).join('.') + '.webp';
+    const finalFilePath = path.join('images', finalFileName);
     
     sharp(originalFilePath)
-        .resize(206, 260) 
-        .jpeg({ quality: 80 }) 
-        .toFile(tempFilePath) 
+        .resize(206, 260)
+        .toFormat('webp')
+        .toFile(tempFilePath)
         .then(() => {
-            return fse.move(tempFilePath, originalFilePath, { overwrite: true });
+            return fse.move(tempFilePath, finalFilePath, { overwrite: true });
         })
         .then(() => {
+            if (originalFilePath !== finalFilePath) {
+                fs.unlinkSync(originalFilePath);
+            }
+
             const book = new Book({
                 ...bookObject,
                 userId: req.auth.userId,
-                imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+                imageUrl: `${req.protocol}://${req.get('host')}/images/${finalFileName}`
             });
+
+            if (book.ratings[0].grade == 0) {
+                book.averageRating = 0;
+                book.ratings = [];
+            }
 
             return book.save();
         })
@@ -113,6 +122,7 @@ exports.bookRating = (req,res,next) => {
 
             const allRatings = book.ratings.reduce((sum, rating) => sum + rating.grade, 0);
             book.averageRating = parseFloat((allRatings / book.ratings.length).toFixed(1));
+            //book.averageRating = Math.round(allRatings / book.ratings.length); //pas de chiffre après la virgule
 
             return book.save();
         })

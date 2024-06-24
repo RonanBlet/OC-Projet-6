@@ -2,15 +2,15 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const path = require('path');
+require('dotenv').config();
+const dbURI = process.env.MONGODB_URI;
 
 const booksRoutes = require('./routes/books');
 const userRoutes = require('./routes/user');
 
 const app = express();
 
-mongoose.connect('mongodb+srv://Blet_Ronan:Tv5pP84vFjW0OHzP@monvieuxgrimoire.uxsdfwi.mongodb.net/?retryWrites=true&w=majority&appName=MonVieuxGrimoire',
-    {useNewUrlParser : true,
-        useUnifiedTopology:true})
+mongoose.connect(dbURI)
     .then (() => console.log('Connexion a MongoDB Réussie'))
     .catch (() => console.log('Connexion a MongoDB échouée'));
 
